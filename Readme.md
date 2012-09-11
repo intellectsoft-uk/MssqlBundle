@@ -18,6 +18,16 @@ Add to section doctrine - dbal in **config.yml** option **driver_class**
             driver:         %database_driver%
             driver_class:   \Realestate\MssqlBundle\Driver\PDODblib\Driver
 
+make sure your %database_driver% is set to pdo_dblib
+
+*************************
+In app/AppKernel.php registerBundles(), add the following line:
+   $bundles = array(
+            ...
+            new Realestate\MssqlBundle\RealestateMssqlBundle(),
+    ...
+    );
+
 *************************
 In Doctrine\DBAL\DriverManager's $_driverMap property, add this driver to the list:
 
