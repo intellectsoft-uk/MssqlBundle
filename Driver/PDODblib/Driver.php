@@ -26,7 +26,7 @@ class Driver implements \Doctrine\DBAL\Driver
      */
     public function connect(array $params, $username = null, $password = null, array $driverOptions = array())
     {
-        if (stristr(PHP_OS, 'WIN')) {
+        if (stristr(PHP_OS, 'WIN') && PHP_OS != 'Darwin') {
             $conn = new \Doctrine\DBAL\Driver\PDOConnection(
                 $this->_constructPdoDsn($params),
                 $username,
