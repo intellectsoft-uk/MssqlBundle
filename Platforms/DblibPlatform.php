@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -23,7 +24,6 @@ namespace Realestate\MssqlBundle\Platforms;
 
 use Doctrine\DBAL\DBALException,
     Doctrine\DBAL\Schema\TableDiff;
-
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 
@@ -36,16 +36,14 @@ use Doctrine\DBAL\Platforms\SQLServerPlatform;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
-class DblibPlatform extends SQLServerPlatform
-{
+class DblibPlatform extends SQLServerPlatform {
 
     /**
      * Whether the platform supports transactions.
      *
      * @return boolean
      */
-    public function supportsTransactions()
-    {
+    public function supportsTransactions() {
         return false;
     }
 
@@ -54,11 +52,9 @@ class DblibPlatform extends SQLServerPlatform
      *
      * @return boolean
      */
-    public function supportsSavepoints()
-    {
+    public function supportsSavepoints() {
         return false;
     }
-    
 
     /**
      * Adds an adapter-specific LIMIT clause to the SELECT statement.
@@ -69,8 +65,7 @@ class DblibPlatform extends SQLServerPlatform
      * @link http://lists.bestpractical.com/pipermail/rt-devel/2005-June/007339.html
      * @return string
      */
-    protected function doModifyLimitQuery($query, $limit, $offset = null)
-    {
+    protected function doModifyLimitQuery($query, $limit, $offset = null) {
         if ($limit > 0) {
             $count = intval($limit);
             $offset = intval($offset);
@@ -81,14 +76,14 @@ class DblibPlatform extends SQLServerPlatform
 
             if ($offset == 0) {
                 // SELECT TOP DISTINCT does not work with mssql
-                if(preg_match('#^SELECT\s+DISTINCT#i', $query) > 0) {
+                if (preg_match('#^SELECT\s+DISTINCT#i', $query) > 0) {
                     $query = preg_replace('/^SELECT\s+DISTINCT\s/i', 'SELECT DISTINCT TOP ' . $count . ' ', $query);
                 } else {
                     $query = preg_replace('/^SELECT\s/i', 'SELECT TOP ' . $count . ' ', $query);
                 }
-
-                
             } else {
+                $query = str_replace('DISTINCT', ' ', $query);
+
                 $orderby = stristr($query, 'ORDER BY');
 
                 if (!$orderby) {
@@ -115,24 +110,19 @@ class DblibPlatform extends SQLServerPlatform
         return $query;
     }
 
-
     /**
      * Get the platform name for this instance
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return 'mssql';
     }
 
-
-    /**
     /**
      * @override
      */
-    protected function initializeDoctrineTypeMappings()
-    {
+    protected function initializeDoctrineTypeMappings() {
         parent::initializeDoctrineTypeMappings();
 
         // add uniqueidentifier
@@ -142,8 +132,16 @@ class DblibPlatform extends SQLServerPlatform
     /**
      * @override
      */
-    public function getDateTimeFormatString()
-    {
+    public function getDateTimeFormatString() {
         return 'Y-m-d H:i:s.u';
     }
+
+    /**
+     * @override
+     * @return boolean
+     */
+    public function supportsLimitOffset() {
+        return true;
+    }
+
 }
