@@ -29,21 +29,23 @@ class DblibSchemaManager extends SQLServerSchemaManager
         $list = array();
         foreach ($tableForeignKeys as $key => $value) {
             $value = \array_change_key_case($value, CASE_LOWER);
-            if (!isset($list[$value['constraint_name']])) {
-                if ($value['delete_rule'] == "NO ACTION") {
-                    $value['delete_rule'] = null;
-                }
+            if(array_key_exists('constraint_name', $value)){
+                if (!isset($list[$value['constraint_name']])) {
+                    if ($value['delete_rule'] == "NO ACTION") {
+                        $value['delete_rule'] = null;
+                    }
 
-                $list[$value['pkconstraint_name']] = array(
-                    'name' => $value['pkconstraint_name'],
-                    'local' => array(),
-                    'foreign' => array(),
-                    'foreignTable' => $value['fktable_name'],
-                    'onDelete' => $value['delete_rule'],
-                );
+                    $list[$value['pkconstraint_name']] = array(
+                        'name' => $value['pkconstraint_name'],
+                        'local' => array(),
+                        'foreign' => array(),
+                        'foreignTable' => $value['fktable_name'],
+                        'onDelete' => $value['delete_rule'],
+                    );
+                }
+                $list[$value['pkconstraint_name']]['local'][$value['deferrability']] = $value['pkcolumn_name'];
+                $list[$value['pkconstraint_name']]['foreign'][$value['deferrability']] = $value['fkcolumn_name'];
             }
-            $list[$value['pkconstraint_name']]['local'][$value['deferrability']] = $value['pkcolumn_name'];
-            $list[$value['pkconstraint_name']]['foreign'][$value['deferrability']] = $value['fkcolumn_name'];
         }
 
         $result = array();
