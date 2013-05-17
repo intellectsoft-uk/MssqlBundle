@@ -33,7 +33,7 @@ class Connection extends \Doctrine\DBAL\Driver\PDOConnection implements DriverCo
      */
     public function rollback()
     {
-        $this->exec('ROLLBACK TRANSACTION');
+//        $this->exec('ROLLBACK TRANSACTION');
     }
 
     /**
