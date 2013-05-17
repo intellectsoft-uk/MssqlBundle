@@ -143,7 +143,7 @@ class DblibPlatform extends SQLServerPlatform
      */
     public function getDateTimeFormatString()
     {
-        return 'Y-m-d H:i:s.u';
+        return 'F d Y H:i:s:000A';
     }
 
     /**
