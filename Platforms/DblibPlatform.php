@@ -138,6 +138,11 @@ class DblibPlatform extends SQLServerPlatform
         $this->doctrineTypeMapping['uniqueidentifier'] = 'uniqueidentifier';
     }
 
+    public function getTimestampTypeDeclarationSQL(array $fieldDeclaration)
+    {
+        return "TIMESTAMP";
+    }
+    
     /**
      * @override
      */
@@ -146,6 +151,11 @@ class DblibPlatform extends SQLServerPlatform
         return 'F d Y H:i:s:000A';
     }
 
+    public function getTimestampFormatString()
+    {
+        return 'Y-m-d H:i:s';
+    }
+    
     /**
      * @override
      * @return bool
