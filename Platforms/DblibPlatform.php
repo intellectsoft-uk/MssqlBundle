@@ -26,6 +26,7 @@ use Doctrine\DBAL\DBALException,
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
+use Doctrine\DBAL\Schema\Index;
 
 /**
  * The DblibPlatform provides the behavior, features and SQL dialect of the
@@ -133,17 +134,28 @@ class DblibPlatform extends SQLServerPlatform
         parent::initializeDoctrineTypeMappings();
 
         // add uniqueidentifier
+        //$this->doctrineTypeMapping['timestamp'] = 'date';
         $this->doctrineTypeMapping['uniqueidentifier'] = 'uniqueidentifier';
     }
 
+    public function getTimestampTypeDeclarationSQL(array $fieldDeclaration)
+    {
+        return "TIMESTAMP";
+    }
+    
     /**
      * @override
      */
     public function getDateTimeFormatString()
     {
-        return 'Y-m-d H:i:s.u';
+        return 'F d Y H:i:s:000A';
     }
 
+    public function getTimestampFormatString()
+    {
+        return 'Y-m-d H:i:s';
+    }
+    
     /**
      * @override
      * @return bool
@@ -151,5 +163,27 @@ class DblibPlatform extends SQLServerPlatform
     public function supportsLimitOffset()
     {
         return true;
+    }
+    
+    public function getCreateIndexSQL(Index $index, $table)
+    {
+        if ($table instanceof Table) {
+            $table = $table->getQuotedName($this);
+        }
+        $name = $index->getQuotedName($this);
+        $columns = $index->getColumns();
+
+        if (count($columns) == 0) {
+            throw new \InvalidArgumentException("Incomplete definition. 'columns' required.");
+        }
+
+        if ($index->isPrimary()) {
+            return $this->getCreatePrimaryKeySQL($index, $table);
+        }
+
+        $query = 'CREATE ' . $this->getCreateIndexSQLFlags($index) . 'INDEX ' . $name . ' ON ' . $table;
+        $query .= ' (' . $this->getIndexFieldDeclarationListSQL($columns) . ')';
+
+        return $query;
     }
 }

@@ -17,49 +17,53 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Realestate\MssqlBundle\Driver\PDODblib;
+namespace Realestate\MssqlBundle\Types;
 
-use Doctrine\DBAL\Driver\Connection as DriverConnection;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\Type;
 
 /**
- * MsSql/Dblib Connection implementation.
+ * Type that maps an SQL TIME to a PHP DateTime object.
  *
  * @since 2.0
  */
-class Connection extends \Doctrine\DBAL\Driver\PDOConnection implements DriverConnection
+class TimestampType extends Type
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function rollback()
+    public function getName()
     {
-//        $this->exec('ROLLBACK TRANSACTION');
+        return 'timestamp';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function commit()
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        $this->exec('COMMIT TRANSACTION');
+        return $platform->getTimestampTypeDeclarationSQL($fieldDeclaration);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function beginTransaction()
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        $this->exec('BEGIN TRANSACTION');
+        return ($value !== null)
+            ? $value->format($platform->getTimestampFormatString()) : null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function lastInsertId($name = null)
+    public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        $stmt = $this->query('SELECT SCOPE_IDENTITY()');
-        $id = $stmt->fetchColumn();
-        $stmt->closeCursor();
-        return $id;
+        if ($value === null) {
+            return null;
+        }
+
+        $val = \Realestate\MssqlBundle\Types\RealestateDateTime::createFromFormat($platform->getTimestampFormatString(), $value);
+        if (!$val) {
+            throw ConversionException::conversionFailedFormat($value, $this->getName(), $platform->getTimestampFormatString());
+        }
+        return $val;
     }
 }
