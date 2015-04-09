@@ -132,6 +132,9 @@ class DblibPlatform extends SQLServerPlatform
     {
         parent::initializeDoctrineTypeMappings();
 
+        //add Date
+        $this->doctrineTypeMapping['date'] = 'date';
+
         // add uniqueidentifier
         $this->doctrineTypeMapping['uniqueidentifier'] = 'uniqueidentifier';
     }
@@ -142,6 +145,14 @@ class DblibPlatform extends SQLServerPlatform
     public function getDateTimeFormatString()
     {
         return 'Y-m-d H:i:s.u';
+    }
+
+    /**
+     * @override
+     */
+    public function getDateFormatString()
+    {
+        return 'Y-m-d';
     }
 
     /**

@@ -22,6 +22,9 @@ Add to section doctrine - dbal in **config.yml** option **driver_class**
             # options:
             #    ansi_nulls: on
             #    ansi_warnings: on
+            #    ansi_padding: on
+            #    concat_null_yields_null: on
+            #    quoted_identifier: on
 
 The %database_driver% must not be set, neither the %charset% parameter, as for stackoverflow.com/questions/8492941/doctrine-2-how-to-add-custom-dbal-driver#answer-8731924
 

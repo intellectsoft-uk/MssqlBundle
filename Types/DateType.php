@@ -37,7 +37,7 @@ class DateType extends BaseDateType
     
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {   
-        if ($value === null) {
+        if ($value instanceof \DateTime) {
             return null;
         }   
 

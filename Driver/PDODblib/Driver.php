@@ -54,7 +54,10 @@ class Driver implements \Doctrine\DBAL\Driver
     protected function handleInit(Connection $connection, array $options = array()) {
         $availableOptions = array(
             'ansi_nulls',
-            'ansi_warnings'
+            'ansi_warnings',
+            'ansi_padding',
+            'concat_null_yields_null',
+            'quoted_identifier'
         );
 
         $options = array_intersect_key($options, array_flip($availableOptions));

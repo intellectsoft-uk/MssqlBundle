@@ -1,5 +1,5 @@
 {
-    "name": "isoft/mssql-bundle",
+    "name": "headdev/mssql-bundle",
     "description": "Driver for work with MsSQL server",
     "authors": [
         {
@@ -12,7 +12,11 @@
         {
             "name": "Emanuele Panzeri - ThePanz",
             "email": "thepanz@gmail.com"
-        }
+        },
+		{
+		    "name": "Daniel Oliveira",
+			"email": "daniel@headdev.com.br"
+		}
 
     ],
     "require": {},
